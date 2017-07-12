@@ -1,0 +1,69 @@
+#include<stdio.h>//题目就是输入一个数将他的每个数字排序最大的数－最小的数是否等于它本身 
+int main()
+{
+    int n;
+    while(~scanf("%d",&n))
+    {
+        while(n--)
+        {
+            int i=1,t,j,k,m,a,b,c,d;
+            scanf("%d",&m);
+            while(m)
+            {
+                a=m/1000;
+                b=m/100%10;
+                c=m/10%10;
+                d=m%10;
+                if(a<b)
+                {
+                    t=a;
+                    a=b;
+                    b=t;
+                }
+                if(a<c)
+                {
+                    t=a;
+                    a=c;
+                    c=t;
+                }
+                if(a<d)
+                {
+                    t=a;
+                    a=d;
+                    d=t;
+                }
+                if(b<c)
+                {
+                    t=b;
+                    b=c;
+                    c=t;
+                }
+                if(b<d)
+                {
+                    t=b;
+                    b=d;
+                    d=t;
+                }
+                if(c<d)
+                {
+                    t=c;
+                    c=d;
+                    d=t;
+                }
+                k=(a*1000+b*100+c*10+d)-(d*1000+c*100+b*10+a);
+                if(k == m)
+                {
+                    printf("%d\n",i);
+                    break;
+                }
+                else
+                {
+                    i++;
+                    m=k;
+                }
+            }
+
+        }
+    }
+    return 0;
+}
