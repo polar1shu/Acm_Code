@@ -1,41 +1,68 @@
-#include <stdio.h>
-#include <algorithm>
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<algorithm>
 using namespace std;
-typedef long long ll;
-
-bool is_prime[1000010];
-bool is_prime_small[1000010];
-
-void segment_sieve(ll a, ll b)
+const int INF=(1<<30);
+const int maxn=10000+5;
+struct Edge{
+	int to; int weight;
+	Edge(int t,int w):to(t),weight(w){}
+};
+vector<vector<Edge> > G(maxn);
+bool inq[maxn];  //判断是否在队列里 
+int dist[maxn];
+int s[maxn];
+void Spfa(int s,int n)
 {
-    for(int i=0; (ll)i*i<b; i++) is_prime_small[i] = true;//i是素数
-    for(int i=0; i<b-a; i++) is_prime[i] = true;
-    //利用0~len代表a~b的数
-    for(int i=2; (ll)i*i<b; i++)
-    {
-        if(is_prime_small[i])
-        {
-            for(int j=i+i; (ll)j*j<b; j+=i)
-                is_prime_small[j] = false; //筛[2,√b)
-            for(ll j=max(2LL, (a+i-1)/i)*i; j<b; j+=i)
-                is_prime[j-a] = false; //筛[a,b)
-            //j代表素数，j-a是将a~b变为0~b-a以便数组好存储
-            //2LL是2的长整形形式，与其比较意思是j最少是i的两倍
-            //((a+i-1)/i)*i得出的是(>=a && %i==0)离a最近的数,其实
-            //也可以写成a%i==0 ? a : (a/i+1)*i
-        }
-    }
+	memset(inq,false,sizeof(inq));
+	for(int i=0;i<n+1;i++) dist[i]=INF;
+	
+	queue<int> Q;
+	dist[s]=0;
+	inq[s]=true;    
+	Q.push(s);
+	while(!Q.empty())
+	{
+		int u=Q.front(); 
+		Q.pop();
+		inq[u]=false;
+		for(int i=0;i<G[u].size();i++)
+		{
+			int v=G[u][i].to, w=G[u][i].weight;
+			if(dist[v]>dist[u]+w)
+			{
+				dist[v]=dist[u]+w;
+				if(!inq[v]) Q.push(v),inq[v]=true;
+			}
+		}
+	}
 }
-
 int main()
 {
-    ll a, b;
+	int K,N,M,u,v;
+	cin>>K>>N>>M; 
+	for(int i=0;i<K;i++)
+		cin>>s[i];
+	for(int i=0;i<M;i++)
+	{
+		cin>>u>>v;
+		G[v].push_back(Edge(u,1));
+	}
+	int cnt=0,ok;
 
-    scanf("%lld%lld", &a,&b);
-    segment_sieve(a,b);
-    int ans = 0;
-    for(ll i=0; i<b-a; i++)
-        if(is_prime[i]) printf("%lld ", i+a), ans++;
-    printf("\nans=%d\n", ans);
-    return 0;
+	for(int i=1;i<=N;i++)
+	{
+		Spfa(i,N);
+		ok=1;
+		for(int j=0;j<K;j++)
+		if(dist[s[j]]==INF) {
+			ok=0;
+			break;
+		}
+		if(ok) cnt++;
+	}
+	cout<<cnt<<endl;
+	return 0;
 }
